@@ -16,17 +16,24 @@ class Credentials:
     raddress = "192.168.0.1"
     username = "admin"
     password = ""
+    override = ""
 
     def auth(self):
         self.raddress = raw_input('Router IP: ')
         self.username = raw_input('Username: ')
         self.password = getpass.getpass('Password: ')
 
+    def geturl(self):
+        if self.override:
+            return self.override
+        else:
+            '%s:%s@%s' % (self.cred.username, self.cred.password, self.cred.raddress)
+
 class Requester:
     cred = Credentials()
 
     def fetch(self):
-        url = '%s:%s@%s/goform/updateIptAccount' % (self.cred.username, self.cred.password, self.cred.raddress)
+        url = '%s/goform/updateIptAccount' % (self.cred.geturl())
         return urllib.urlopen('http://' + url).read()
 
 class DHCPResolver:
@@ -34,7 +41,7 @@ class DHCPResolver:
     lookup = dict()
 
     def prepare(self):
-        url = '%s:%s@%s/lan_dhcp_clients.asp' % (self.cred.username, self.cred.password, self.cred.raddress)
+        url = '%s/lan_dhcp_clients.asp' % (self.cred.geturl())
         data = urllib.urlopen('http://' + url).read()
         dataline = re.search(r'var dhcpList=new Array\((.*?)\)', data).group(1)
         records = dataline.split(',')
@@ -54,7 +61,11 @@ requester = Requester()
 def main():
     global resolver, requester
     c = Credentials()
-    c.auth()
+
+    if len(sys.argv) > 1:
+        c.override = sys.argv[1]
+    else:
+        c.auth()
     requester.cred = c
     resolver.cred = c
     resolver.prepare()
