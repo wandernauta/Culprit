@@ -6,3 +6,5 @@ It's pretty much a hack though. You can launch it like this:
 
     python culprit.py # or...
     python culprit.py user:pass@ip
+
+![Screenshot](http://cl.ly/312l/content)
