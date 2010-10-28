@@ -12,8 +12,6 @@ import StringIO
 import subprocess
 import re
 
-resolver = None
-
 class Credentials:
     raddress = "192.168.0.1"
     username = "admin"
@@ -50,19 +48,17 @@ class DHCPResolver:
         else:
             return ip
 
-def main():
-    global resolver
+resolver = DHCPResolver()
+requester = Requester()
 
+def main():
+    global resolver, requester
     c = Credentials()
     c.auth()
-
-    r = Requester()
-    r.cred = c
-
-    resolver = DHCPResolver()
+    requester.cred = c
     resolver.cred = c
     resolver.prepare()
-    curses.wrapper(cmain, r)
+    curses.wrapper(cmain)
 
 def status(statusbar, message):
     statusbar.clear()
@@ -93,7 +89,7 @@ def parse(text):
     sumdown = sum(record['downrate'] for record in records)
     return (reversedrecords, sumup, sumdown)
 
-def window(mainwin, text, r):
+def window(mainwin, text):
     mainwin.clear()
     mainwin.move(0,0)
     maxlines = mainwin.getmaxyx()[0] - 3
@@ -121,16 +117,18 @@ def window(mainwin, text, r):
     mainwin.move(0,0)
     mainwin.refresh()
 
-def cmain(stdscr, r):
+def cmain(stdscr):
+    global requester
+
     (maxy, maxx) = stdscr.getmaxyx()
     curses.sb = curses.newwin(1, maxx, maxy-1, 0)
     mainwin = curses.newwin(maxy-1, maxx, 0, 0)
 
     while True:
         status(curses.sb, "Fetching...")
-        dat = r.fetch()
+        dat = requester.fetch()
         status(curses.sb, "Parsing...")
-        window(mainwin, dat, r)
+        window(mainwin, dat)
         status(curses.sb, "Fetched %d records" % len(dat.split('\n')))
         time.sleep(5)
 
