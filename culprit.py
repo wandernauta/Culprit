@@ -66,7 +66,7 @@ def resolveip(ip):
 	if smbcache.has_key(ip):
 		return smbcache[ip]
 		
-	status(curses.sb, "Resolving {}".format(ip))
+	status(curses.sb, "Resolving {0}".format(ip))
 	try:
 		host = subprocess.check_output(["smbutil", "status", ip]).split('\n')[1].split(':')[1].strip()
 		smbcache[ip] = host
@@ -84,7 +84,7 @@ def window(mainwin, text, r):
 	
 	mainwin.addstr("Culprit.py 0.1 listening to {0.raddress} - Total up: {1} Total down: {2} \n".format(r, sumup, sumdown))
 	mainwin.addstr("\n")
-	mainwin.addstr("{:<15} {:>8} {:>8} {:>15} {:>15}\n".format("IP/HOST", "UPLOAD", "DOWNLOAD", "SENT MB", "RECV MB"), curses.A_BOLD)
+	mainwin.addstr("{0:<15} {1:>8} {2:>8} {3:>15} {4:>15}\n".format("IP/HOST", "UPLOAD", "DOWNLOAD", "SENT MB", "RECV MB"), curses.A_BOLD)
 	
 	i = 0
 	for record in records:
