@@ -24,10 +24,10 @@ class Credentials:
         self.password = getpass.getpass('Password: ')
 
     def geturl(self):
-        if self.override:
+        if self.override != "":
             return self.override
         else:
-            '%s:%s@%s' % (self.cred.username, self.cred.password, self.cred.raddress)
+            return '%s:%s@%s' % (self.username, self.password, self.raddress)
 
 class Requester:
     cred = Credentials()
